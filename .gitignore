@@ -1,3 +1,5 @@
 *.class
 out
-.idea
+
+# JetBrains IntelliJ
+**/.idea/workspace.xml
