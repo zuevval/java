@@ -1,14 +1,13 @@
 package ru.spbstu.pipeline.implementation;
 
 import ru.spbstu.pipeline.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class DummyReader implements Reader {
     protected List<Consumer> consumers;
 
-    public DummyReader(String confPath){
+    public DummyReader(){
         consumers = new ArrayList<>();
     }
 
@@ -32,7 +31,9 @@ public class DummyReader implements Reader {
     }
 
     public void run(){
-        for (Consumer consumer: consumers)
+        for (Consumer consumer: consumers){
+            consumer.loadDataFrom(this);
             consumer.run();
+        }
     }
 }
