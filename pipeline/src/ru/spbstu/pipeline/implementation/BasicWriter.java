@@ -1,6 +1,7 @@
 package ru.spbstu.pipeline.implementation;
 
 import ru.spbstu.pipeline.*;
+import ru.spbstu.pipeline.logging.*;
 
 import java.util.Arrays;
 import java.util.List;
@@ -32,6 +33,18 @@ public class BasicWriter implements Writer  {
     public BasicWriter(){
         this.producers = new ArrayList<>();
         this.status = Status.OK;
+    }
+
+    public BasicWriter(String configFilename){
+        this();
+    }
+
+    public BasicWriter(Logger logger){
+        this();
+    }
+
+    public BasicWriter(String configFilename, Logger logger){
+        this(logger);
     }
 
     public void run(){

@@ -1,6 +1,8 @@
 package ru.spbstu.pipeline.implementation;
 
 import ru.spbstu.pipeline.*;
+import ru.spbstu.pipeline.logging.Logger;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,6 +11,18 @@ public class DummyReader implements Reader {
 
     public DummyReader(){
         consumers = new ArrayList<>();
+    }
+
+    public DummyReader(String configFilename){
+        this();
+    }
+
+    public DummyReader(Logger logger){
+        this();
+    }
+
+    public DummyReader(String configFilename, Logger logger){
+        this(logger);
     }
 
     public void addConsumer(Consumer consumer) {
