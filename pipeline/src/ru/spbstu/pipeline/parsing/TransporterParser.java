@@ -5,8 +5,10 @@ import ru.spbstu.pipeline.logging.Logger;
 public class TransporterParser extends Parser {
     private enum grammar{
         EXECUTORS("executors"),
+        EXECUTORS_DELIMITER(">"),
         READER("reader"),
-        WRITER("writer");
+        WRITER("writer"),
+        WORKER_PARAMS_DELIMITER(";");
 
         private final String title;
         public String toString(){
@@ -21,7 +23,8 @@ public class TransporterParser extends Parser {
             logger.log("Error in class TransporterParser: writer not set");
             return null;
         }
-        return new WorkerParameters(writerDescription, logger);
+        return new WorkerParameters(writerDescription,
+                grammar.WORKER_PARAMS_DELIMITER.toString(), logger);
     }
 
     public WorkerParameters reader(){
@@ -30,7 +33,8 @@ public class TransporterParser extends Parser {
             logger.log("Error in class TransporterParser: reader not set");
             return null;
         }
-        return new WorkerParameters(readerDescription, logger);
+        return new WorkerParameters(readerDescription,
+                grammar.WORKER_PARAMS_DELIMITER.toString(), logger);
     }
 
     /* TODO implement executors()
