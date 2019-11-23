@@ -23,28 +23,47 @@ public class Transporter {
         buildPipeline();
     }
 
-    public void run(){
-        boolean hasNullWorker = (reader == null) && (writer == null);
-        for (Executor ex: executors) hasNullWorker &= (ex == null);
+    protected int checkWorkers(){
+        boolean hasNullWorker = (reader == null) || (writer == null);
+        for (Executor ex: executors) hasNullWorker |= (ex == null);
         if(hasNullWorker){
             logger.log("Error in Transporter: unable to launch - a worker is missing");
-            return;
+            return -1;
         }
+        return 0;
+    }
+
+    public void run(){
+        if (checkWorkers() != 0) return;
         reader.run();
     }
 
     protected void buildPipeline(){
         WorkerParameters readerParams =  parser.reader();
         WorkerParameters writerParams =  parser.writer();
-        //TODO add executors along with TransporterParser.executors()
-        WorkerParameters [] executorParams = new WorkerParameters[0];
+        WorkerParameters [] executorParams = parser.executors();
         reader = createWorker(readerParams, Reader.class);
         writer = createWorker(writerParams, Writer.class);
         if(executorParams.length == 0){
+            if(checkWorkers() != 0) return;
             reader.addConsumer(writer);
             writer.addProducer(reader);
         } else {
-            // TODO add executors
+            for (WorkerParameters executorParam: executorParams)
+                executors.add(createWorker(executorParam, Executor.class));
+            if(checkWorkers() != 0) return;
+            for (int i = 1; i < executors.size(); i++){
+                Executor producer = executors.get(i-1);
+                Executor consumer = executors.get(i);
+                producer.addConsumer(consumer);
+                consumer.addProducer(producer);
+            }
+            Executor firstExecutor = executors.get(0);
+            reader.addConsumer(firstExecutor);
+            firstExecutor.addProducer(reader);
+            Executor lastExecutor = executors.get(executors.size() - 1);
+            writer.addProducer(lastExecutor);
+            lastExecutor.addConsumer(writer);
         }
     }
 

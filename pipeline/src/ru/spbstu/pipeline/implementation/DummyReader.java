@@ -8,6 +8,7 @@ import java.util.List;
 
 public class DummyReader implements Reader {
     protected List<Consumer> consumers;
+    protected Logger logger;
 
     public DummyReader(){
         consumers = new ArrayList<>();
@@ -19,6 +20,7 @@ public class DummyReader implements Reader {
 
     public DummyReader(Logger logger){
         this();
+        this.logger = logger;
     }
 
     public DummyReader(String configFilename, Logger logger){
@@ -27,7 +29,9 @@ public class DummyReader implements Reader {
 
     public void addConsumer(Consumer consumer) {
         if (consumers.contains(consumer)) return;
-        consumers.add(consumer);
+        if (consumer != null) consumers.add(consumer);
+        else if (logger != null) logger.log("Warning in DummyReader: " +
+                "tried to add consumer that is null");
     }
 
     public void addConsumers(List<Consumer> consumers){

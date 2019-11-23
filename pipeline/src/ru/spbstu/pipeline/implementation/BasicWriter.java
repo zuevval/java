@@ -11,10 +11,13 @@ public class BasicWriter implements Writer  {
     protected Object data;
     protected Status status;
     protected List<Producer> producers;
+    protected Logger logger;
 
     public void addProducer(Producer producer){
         if (producers.contains(producer)) return;
-        producers.add(producer);
+        if (producer != null) producers.add(producer);
+        else if (logger != null) logger.log("Warning in BasicExecutor: " +
+                "tried to add producer that is null");
     }
 
     public void addProducers(List<Producer> producers){
@@ -41,6 +44,7 @@ public class BasicWriter implements Writer  {
 
     public BasicWriter(Logger logger){
         this();
+        this.logger = logger;
     }
 
     public BasicWriter(String configFilename, Logger logger){

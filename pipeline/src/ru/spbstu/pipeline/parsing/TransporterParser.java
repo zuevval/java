@@ -20,7 +20,7 @@ public class TransporterParser extends Parser {
     public WorkerParameters writer(){
         String writerDescription = properties.get(grammar.WRITER.toString());
         if(writerDescription == null){
-            logger.log("Error in class TransporterParser: writer not set");
+            if (logger != null) logger.log("Error in class TransporterParser: writer not set");
             return null;
         }
         return new WorkerParameters(writerDescription,
@@ -30,18 +30,27 @@ public class TransporterParser extends Parser {
     public WorkerParameters reader(){
         String readerDescription = properties.get(grammar.READER.toString());
         if(readerDescription == null){
-            logger.log("Error in class TransporterParser: reader not set");
+            if (logger != null) logger.log("Error in class TransporterParser: reader not set");
             return null;
         }
         return new WorkerParameters(readerDescription,
                 grammar.WORKER_PARAMS_DELIMITER.toString(), logger);
     }
 
-    /* TODO implement executors()
+
     public WorkerParameters [] executors(){
-        String descriptions = properties.get(grammar.EXECUTORS.toString());
-        ...
-    }*/
+        String executorsInfo = properties.get(grammar.EXECUTORS.toString());
+        if (executorsInfo == null){
+            if (logger != null) logger.log("Warning: parameter 'executors' not set");
+            return new WorkerParameters[0];
+        }
+        String [] descriptions = executorsInfo.split(grammar.EXECUTORS_DELIMITER.toString());
+        WorkerParameters [] res = new WorkerParameters[descriptions.length];
+        for(int i=0; i<res.length; i++)
+            res[i] = new WorkerParameters(descriptions[i],
+                    grammar.WORKER_PARAMS_DELIMITER.toString(), logger);
+        return res;
+    }
 
     public TransporterParser(String configFilename, Logger logger){
         super(configFilename, logger);
