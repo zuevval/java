@@ -1,5 +1,6 @@
 package ru.spbstu.pipeline.parsing;
 
+import ru.spbstu.pipeline.Status;
 import ru.spbstu.pipeline.logging.Logger;
 
 public class TransporterParser extends Parser {
@@ -21,6 +22,7 @@ public class TransporterParser extends Parser {
         String writerDescription = properties.get(grammar.WRITER.toString());
         if(writerDescription == null){
             if (logger != null) logger.log("Error in class TransporterParser: writer not set");
+            status = Status.ERROR;
             return null;
         }
         return new WorkerParameters(writerDescription,
@@ -31,6 +33,7 @@ public class TransporterParser extends Parser {
         String readerDescription = properties.get(grammar.READER.toString());
         if(readerDescription == null){
             if (logger != null) logger.log("Error in class TransporterParser: reader not set");
+            status = Status.ERROR;
             return null;
         }
         return new WorkerParameters(readerDescription,

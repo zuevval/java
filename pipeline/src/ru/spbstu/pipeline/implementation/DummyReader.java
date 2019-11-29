@@ -27,6 +27,10 @@ public class DummyReader implements Reader {
         this(logger);
     }
 
+    public DummyReader(Logger logger, String configFilename){
+        this(configFilename, logger);
+    }
+
     public void addConsumer(Consumer consumer) {
         if (consumers.contains(consumer)) return;
         if (consumer != null) consumers.add(consumer);

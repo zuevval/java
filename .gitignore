@@ -3,3 +3,6 @@ out
 
 # JetBrains IntelliJ
 **/.idea/workspace.xml
+
+# specific files
+pipeline/src/ru/spbstu/rot13

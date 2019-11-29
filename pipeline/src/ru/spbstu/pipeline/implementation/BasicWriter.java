@@ -51,6 +51,10 @@ public class BasicWriter implements Writer  {
         this(logger);
     }
 
+    public BasicWriter(Logger logger, String configFilename){
+        this(configFilename, logger);
+    }
+
     public void run(){
         for (Producer p: producers)
             if (data == null) data = p.get(); else break;

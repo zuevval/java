@@ -25,9 +25,16 @@ public class BasicExecutor implements Executor {
 
     public Object get(){
         for (Producer p: producers)
-            if (data == null) data = p.get(); else break;
+            if (data == null){
+                if(p.status() == Status.OK)
+                    data = p.get();
+                else if (logger != null)
+                    logger.log("warning in BasicExecutor.get: one of producers is not OK");
+            } else break;
         if (data == null) {
             status = Status.EXECUTOR_ERROR;
+            if(logger != null)
+                logger.log("error in BasicExecutor.get: all producers failed to provide valid data");
         }
         return data;
     }
@@ -81,5 +88,8 @@ public class BasicExecutor implements Executor {
 
     public BasicExecutor(String configFilename, Logger logger){
         this(logger);
+    }
+    public BasicExecutor(Logger logger, String configFilename){
+        this(configFilename, logger);
     }
 }
