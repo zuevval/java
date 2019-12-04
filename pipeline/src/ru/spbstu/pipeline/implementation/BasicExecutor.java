@@ -71,23 +71,15 @@ public class BasicExecutor implements Executor {
         data = producer.get();
     }
 
-    public BasicExecutor(){
+    protected BasicExecutor(){
         producers = new ArrayList<>();
         consumers = new ArrayList<>();
         status = Status.OK;
     }
 
-    public BasicExecutor(String configFilename){
-        this();
-    }
-
-    public BasicExecutor(Logger logger){
+    public BasicExecutor(String configFilename, Logger logger){
         this();
         this.logger = logger;
-    }
-
-    public BasicExecutor(String configFilename, Logger logger){
-        this(logger);
     }
     public BasicExecutor(Logger logger, String configFilename){
         this(configFilename, logger);
