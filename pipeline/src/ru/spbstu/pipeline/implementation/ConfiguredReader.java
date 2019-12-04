@@ -3,6 +3,10 @@ package ru.spbstu.pipeline.implementation;
 import ru.spbstu.pipeline.logging.Logger;
 import ru.spbstu.pipeline.parsing.WorkerParser;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+
 public class ConfiguredReader extends DummyReader {
     protected WorkerParser parser;
 
@@ -16,23 +20,23 @@ public class ConfiguredReader extends DummyReader {
     }
 
     protected byte[] readBytes(String filename){
-        //TODO read bytes from file
-        byte [] res = {0, 1, 2};
+        byte[] res = null;
+        if(filename == null) {
+            if(logger != null) logger.log("error in reader: input filename not set");
+            return res;
+        }
+        try{
+            res = Files.readAllBytes(Paths.get(filename));
+        } catch(IOException e){
+            if(logger != null) logger.log("error in reader: exception while reading input file " + filename);
+        }
         return res;
-    }
-
-    public ConfiguredReader(){super();}
-
-    public ConfiguredReader(Logger logger){super(logger);}
-
-    public ConfiguredReader(String configFilename){
-        super();
-        parser = new WorkerParser(configFilename, null);
     }
 
     public ConfiguredReader(String configFilename, Logger logger){
         super();
-        parser = new WorkerParser(configFilename, null);
+        this.logger = logger;
+        parser = new WorkerParser(configFilename, logger);
     }
 
     public ConfiguredReader(Logger logger, String configFilename){

@@ -10,21 +10,13 @@ public class DummyReader implements Reader {
     protected List<Consumer> consumers;
     protected Logger logger;
 
-    public DummyReader(){
+    protected DummyReader(){
         consumers = new ArrayList<>();
     }
 
-    public DummyReader(String configFilename){
-        this();
-    }
-
-    public DummyReader(Logger logger){
+    public DummyReader(String configFilename, Logger logger){
         this();
         this.logger = logger;
-    }
-
-    public DummyReader(String configFilename, Logger logger){
-        this(logger);
     }
 
     public DummyReader(Logger logger, String configFilename){

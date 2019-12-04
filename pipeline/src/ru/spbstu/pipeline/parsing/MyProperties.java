@@ -55,6 +55,8 @@ class MyProperties extends Hashtable <String, String> {
                     else value.append(character);
             }
         }
+        if(key.length() > 0 && value.length() > 0) // if no newline in the end of the file
+            put(key.toString(), value.toString());
     }
 }
 
