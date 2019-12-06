@@ -58,7 +58,12 @@ public class BasicWriter implements Writer  {
         if (data == null) {
             status = Status.WRITER_ERROR;
             if(logger != null)
-                logger.log("Error in BasicWriter.writeData: data is missing");
+                logger.log("Error in BasicWriter.writeData: inputData is missing");
+            return;
+        }
+        if(data.getClass() != byte[].class){
+            if(logger != null)
+                logger.log("Error in Writer: inputData can't be converted to byte[]");
             return;
         }
         boolean consoleOutput = parser.consoleOutput();

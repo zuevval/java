@@ -6,7 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class Parser {
+public abstract class Parser {  // pure Parser instance is useless: properties are inaccessible
     protected Status status = Status.OK;
     protected MyProperties properties;
     protected Logger logger;
@@ -19,7 +19,7 @@ public class Parser {
 
     public Status getStatus(){return status;}
 
-    public Parser(String configFilename, Logger logger){
+    protected Parser(String configFilename, Logger logger){
         this.logger = logger;
         properties = new MyProperties();
         try{

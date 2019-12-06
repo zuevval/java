@@ -10,7 +10,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BasicExecutor implements Executor {
-    protected Object data;
+    protected Object inputData;
+    protected Object outputData;
     protected Status status;
     protected List<Producer> producers;
     protected List<Consumer> consumers;
@@ -23,20 +24,26 @@ public class BasicExecutor implements Executor {
         }
     }
 
-    public Object get(){
+    protected void getInputData(){
         for (Producer p: producers)
-            if (data == null){
+            if (inputData == null){
                 if(p.status() == Status.OK)
-                    data = p.get();
+                    inputData = p.get();
                 else if (logger != null)
                     logger.log("warning in BasicExecutor.get: one of producers is not OK");
             } else break;
-        if (data == null) {
+        if (inputData == null) {
             status = Status.EXECUTOR_ERROR;
             if(logger != null)
-                logger.log("error in BasicExecutor.get: all producers failed to provide valid data");
+                logger.log("error in BasicExecutor.get: all producers failed to provide valid inputData");
         }
-        return data;
+    }
+
+    public Object get(){
+        if(outputData != null) return outputData;
+        if(inputData == null) getInputData();
+        outputData = inputData;
+        return outputData;
     }
 
     public Status status(){
@@ -68,7 +75,7 @@ public class BasicExecutor implements Executor {
     }
 
     public void loadDataFrom(Producer producer){
-        data = producer.get();
+        inputData = producer.get();
     }
 
     protected BasicExecutor(){
