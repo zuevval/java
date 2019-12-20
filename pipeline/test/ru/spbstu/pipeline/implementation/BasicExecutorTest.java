@@ -7,6 +7,7 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class BasicExecutorTest {
+    /*
     @Test
     public void basicNullCheck (){
         BasicExecutor be = new BasicExecutor("", null);
@@ -27,5 +28,5 @@ public class BasicExecutorTest {
         Assert.assertNotNull(dr.get());
         Assert.assertArrayEquals((byte[])dr.get(), (byte[])be.get());
         Assert.assertEquals(Status.OK, be.status());
-    }
+    }*/
 }

@@ -11,15 +11,15 @@ public class ConfiguredReader extends DummyReader {
     protected WorkerParser parser;
 
     @Override
-    public Object get(){
+    protected byte[] getBytes(){
         String inputFilename = parser.inputFilename();
-        if(inputFilename == null){
-            if(logger != null) logger.log("Error in ConfiguredReader.get(): input filename not set");
+        if (inputFilename == null) {
+            if (logger != null) logger.log("Error in ConfiguredReader.get(): input filename not set");
         }
         return readBytes(inputFilename);
     }
 
-    protected byte[] readBytes(String filename){
+    private byte[] readBytes(String filename){
         byte[] res = null;
         if(filename == null) {
             if(logger != null) logger.log("error in reader: input filename not set");

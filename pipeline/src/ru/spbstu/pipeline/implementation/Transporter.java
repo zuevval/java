@@ -113,6 +113,10 @@ public class Transporter {
 
     private <T> T createWorker(WorkerParameters workerParameters, Class<T>workerType){
         T res = null;
+        if(workerParameters == null || workerParameters.className == null){
+            logger.log("Error in Transporter.createWorker: null argument passed");
+            return res;
+        }
         try{
             res =  workerType.cast(Class.forName(workerParameters.className)
                     .getConstructor(String.class, Logger.class)

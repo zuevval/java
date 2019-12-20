@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Set;
 
 public class BasicWriter implements Writer  {
     protected Object data;
@@ -16,7 +17,9 @@ public class BasicWriter implements Writer  {
     protected List<Producer> producers;
     protected Logger logger;
     protected WorkerParser parser;
+    protected static Set<String> supportedInputTypes = TypeCaster.getSupportedTypes();
 
+    @Override
     public void addProducer(Producer producer){
         if (producers.contains(producer)) return;
         if (producer != null) producers.add(producer);
@@ -24,21 +27,35 @@ public class BasicWriter implements Writer  {
                 "tried to add producer that is null");
     }
 
+    @Override
     public void addProducers(List<Producer> producers){
         for (Producer producer: producers)
             addProducer(producer);
     }
 
-    public void loadDataFrom(Producer producer){
+    @Override
+    public long loadDataFrom(Producer producer){
         if(producer.status() != Status.OK){
             if(logger != null)
                 logger.log("Error in BasicWriter.loadDataFrom(producer): producer is not OK");
             status = Status.WRITER_ERROR;
-            return;
+            return -1L;
         }
-        data = producer.get();
+        Set<String> types = producer.outputDataTypes();
+        for (String type:supportedInputTypes) {
+            if (types.contains(type)) {
+                Producer.DataAccessor da = producer.getAccessor(type);
+                data = da.get();
+                return da.size();
+            }
+        }
+        if(logger != null)
+            logger.log("warning in BasicWriter.loadDataFrom(Producer): " +
+                    "producer can't provide data in any of these types: " + supportedInputTypes);
+        return -1L;
     }
 
+    @Override
     public Status status(){
         return this.status;
     }
@@ -86,6 +103,7 @@ public class BasicWriter implements Writer  {
         }
     }
 
+    @Override
     public void run(){
         if(status != Status.OK){
             if(logger != null)
@@ -94,10 +112,7 @@ public class BasicWriter implements Writer  {
         }
         for (Producer p: producers){
             if (data == null) {
-                if(p.status() == Status.OK)
-                    data = p.get();
-                else if (logger != null)
-                    logger.log("warning in BasicWriter.run(): one of producers is not OK");
+                loadDataFrom(p);
             } else break;
         }
         writeData();

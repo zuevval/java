@@ -6,4 +6,5 @@ out
 
 # specific files
 pipeline/src/ru/spbstu/rot13
-transporter.log
+*.log
+**/AndreyExecutor.jar

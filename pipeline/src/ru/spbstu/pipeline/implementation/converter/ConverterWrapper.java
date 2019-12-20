@@ -11,35 +11,35 @@ import java.io.InputStream;
 public class ConverterWrapper extends BasicExecutor {
 
     @Override
-    public Object get(){
-        if(outputData != null)
+    protected Object getBytes() {
+        if (outputData != null)
             return outputData;
         int startPosition = parser.startPosition();
         int stopPosition = parser.stopPosition();
-        if(parser.getStatus() != status.OK){
+        if (parser.getStatus() != Status.OK) {
             status = Status.EXECUTOR_ERROR;
-            if(logger != null)
+            if (logger != null)
                 logger.log("error in ConverterWrapper.get: couldn't parse properties file");
             return null;
         }
         getInputData();
-        if(inputData == null){
+        if (inputData == null) {
             status = Status.EXECUTOR_ERROR;
-            if(logger != null)
+            if (logger != null)
                 logger.log("error in ConverterWrapper: couldn't get inputData");
             return null;
         }
-        if(inputData.getClass() != byte[].class){
+        if (inputData.getClass() != byte[].class) {
             status = Status.EXECUTOR_ERROR;
-            if(logger != null)
+            if (logger != null)
                 logger.log("error in ConverterWrapper: inputData is not of type byte[]");
             return null;
         }
         InputStream is = new ByteArrayInputStream((byte[]) inputData);
         Converter engine = Converter.initFromRaw(is, startPosition, stopPosition, logger);
-        if(engine == null){
+        if (engine == null) {
             status = Status.EXECUTOR_ERROR;
-            if(logger != null)
+            if (logger != null)
                 logger.log("Error in ConverterWrapper: couldn't build Converter");
             return null;
         }

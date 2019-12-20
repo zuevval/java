@@ -18,6 +18,5 @@ public class Main {
         boolean suppress = (args.length >= 2 && args[1].equals(Main.suppressConsoleLogging));
         Transporter tr = new Transporter(configFilename, suppress);
         tr.run();
-
     }
 }

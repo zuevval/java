@@ -15,7 +15,7 @@ import ru.spbstu.pipeline.logging.Logger;
  *  @author Valerii Zuev
  */
 
-public class Converter {
+class Converter {
 
     private static final double maxProbability;
     private static final double minProbability;
@@ -25,7 +25,7 @@ public class Converter {
         eof = -1;
         maxProbability = 1.0;
         minProbability = 0.0;
-        charset = StandardCharsets.UTF_8;
+        charset = StandardCharsets.UTF_16BE;
     }
 
     private Map<Character, Double> probabilities;
@@ -107,7 +107,7 @@ public class Converter {
      *  @param istart from char No. 'istart' starts sequence that must be encoded
      *  @param istop from char No. 'istop' we don't include literals into initial sequence
      */
-    public static Converter initFromRaw (InputStream inStream, int istart, int istop, Logger logger){
+    static Converter initFromRaw (InputStream inStream, int istart, int istop, Logger logger){
         Converter res = null;
         try {
             res = new Converter(inStream, istart, istop);
@@ -123,13 +123,13 @@ public class Converter {
         return res;
     }
 
-    public static Converter initFromRaw (InputStream inStream, Logger logger){
+    static Converter initFromRaw (InputStream inStream, Logger logger){
         int istart = 0;
         int istop = Integer.MAX_VALUE;
         return initFromRaw(inStream, istart, istop, logger);
     }
 
-    public EncodedText getEncoded (){
+    EncodedText getEncoded (){
         return encoded;
     }
 }

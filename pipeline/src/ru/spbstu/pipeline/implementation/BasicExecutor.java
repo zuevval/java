@@ -8,16 +8,20 @@ import ru.spbstu.pipeline.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 public class BasicExecutor implements Executor {
     protected Object inputData;
     protected Object outputData;
-    protected Status status;
-    protected List<Producer> producers;
-    protected List<Consumer> consumers;
+    protected Status status = Status.OK;;
+    protected List<Producer> producers = new ArrayList<>();
+    protected List<Consumer> consumers = new ArrayList<>();
+    protected static Set<String> supportedInputTypes = TypeCaster.getSupportedTypes();
+    protected ExecutorDataAccessor dataAccessor = new ExecutorDataAccessor();
     protected Logger logger;
 
     public void run(){
+        dataAccessor.put(getBytes());
         for (Consumer consumer: consumers){
             consumer.loadDataFrom(this);
             consumer.run();
@@ -27,10 +31,7 @@ public class BasicExecutor implements Executor {
     protected void getInputData(){
         for (Producer p: producers)
             if (inputData == null){
-                if(p.status() == Status.OK)
-                    inputData = p.get();
-                else if (logger != null)
-                    logger.log("warning in BasicExecutor.get: one of producers is not OK");
+                loadDataFrom(p);
             } else break;
         if (inputData == null) {
             status = Status.EXECUTOR_ERROR;
@@ -39,13 +40,44 @@ public class BasicExecutor implements Executor {
         }
     }
 
-    public Object get(){
-        if(outputData != null) return outputData;
-        if(inputData == null) getInputData();
+    @Override
+    public Set<String> outputDataTypes() {
+        return TypeCaster.getSupportedTypes();
+    }
+
+    class ExecutorDataAccessor implements DataAccessor{
+        TypeCaster caster = new TypeCaster();
+        String canonicalTypeName = byte[].class.getCanonicalName();
+
+        private void put(Object data){
+            caster.put(data);
+        }
+
+        @Override
+        public long size() {
+            return caster.size(canonicalTypeName);
+        }
+
+        @Override
+        public Object get(){
+            return caster.get(canonicalTypeName);
+        }
+    }
+
+    @Override
+    public DataAccessor getAccessor(String canonicalName) {
+        dataAccessor.canonicalTypeName = canonicalName;
+        return dataAccessor;
+    }
+
+    protected Object getBytes() {
+        if (outputData != null) return outputData;
+        if (inputData == null) getInputData();
         outputData = inputData;
         return outputData;
     }
 
+    @Override
     public Status status(){
         return this.status;
     }
@@ -74,18 +106,27 @@ public class BasicExecutor implements Executor {
             addProducer(producer);
     }
 
-    public void loadDataFrom(Producer producer){
-        inputData = producer.get();
+    public long loadDataFrom(Producer producer){
+        if(producer.status() == Status.OK){
+            Set<String> types = producer.outputDataTypes();
+            for (String type:supportedInputTypes) {
+                if (types.contains(type)) {
+                    DataAccessor da = producer.getAccessor(type);
+                    inputData = da.get();
+                    return da.size();
+                }
+            }
+            if(logger != null)
+                logger.log("warning in BasicExecutor.loadDataFrom(Producer):" +
+                        " producer unable to yield data of any of these types: " + supportedInputTypes);
+        } else if (logger != null)
+            logger.log("warning in BasicExecutor.loadDataFrom(Producer): one of producers is not OK");
+        return -1L;
     }
 
-    protected BasicExecutor(){
-        producers = new ArrayList<>();
-        consumers = new ArrayList<>();
-        status = Status.OK;
-    }
+    protected BasicExecutor(){}
 
     public BasicExecutor(String configFilename, Logger logger){
-        this();
         this.logger = logger;
     }
     public BasicExecutor(Logger logger, String configFilename){
