@@ -1,10 +1,12 @@
 package ru.spbstu.pipeline.implementation;
 
+import org.jetbrains.annotations.NotNull;
 import ru.spbstu.pipeline.*;
 import ru.spbstu.pipeline.logging.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 public class DummyReader implements Reader {
@@ -44,25 +46,16 @@ public class DummyReader implements Reader {
         return TypeCaster.getSupportedTypes();
     }
 
-    class ReaderDataAccessor implements DataAccessor{
-        TypeCaster caster = new TypeCaster();
-        String canonicalTypeName = byte[].class.getCanonicalName();
-
+    class ReaderDataAccessor extends ProducerDataAccessor{
         private void put(Object data){
             caster.put(data);
         }
-
-        @Override
-        public long size() {
-            return caster.size(canonicalTypeName);
-        }
-        @Override
-        public Object get(){
-            return caster.get(canonicalTypeName);
-        }
     }
 
-    public DataAccessor getAccessor(String canonicalName){
+    @NotNull
+    @Override
+    public DataAccessor getAccessor(String canonicalName) {
+        Objects.requireNonNull(dataAccessor);
         dataAccessor.canonicalTypeName = canonicalName;
         return dataAccessor;
     }

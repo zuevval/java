@@ -1,9 +1,13 @@
 package ru.spbstu.pipeline.implementation;
 
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TypeCaster {
+    private static Charset charset = StandardCharsets.UTF_16BE;
+
     private enum supportedTypes{
         bytes(byte[].class.getCanonicalName()),
         chars(char[].class.getCanonicalName()),
@@ -32,7 +36,7 @@ public class TypeCaster {
         if(characters != null)
             return characters;
         if(string == null && bytes != null)
-            string = new String(bytes);
+            string = new String(bytes, charset);
         if(string != null)
             characters = string.toCharArray();
         else
@@ -44,7 +48,7 @@ public class TypeCaster {
         if(string != null)
             return string;
         if(bytes != null)
-            string = new String(bytes);
+            string = new String(bytes, charset);
         else if (characters != null)
             string = new String(characters);
         else
@@ -58,7 +62,7 @@ public class TypeCaster {
         if (string == null && characters != null)
             string = new String(characters);
         if(string != null)
-            bytes = string.getBytes();
+            bytes = string.getBytes(charset);
         else
             bytes = new byte[0];
         return bytes;
@@ -78,14 +82,14 @@ public class TypeCaster {
 
     public long size(String canonicalName){
         if(canonicalName == null)
-            return -1L;
+            return 0L;
         if(canonicalName.equals(supportedTypes.string.canonicalName))
             return getString().length();
         if (canonicalName.equals(supportedTypes.chars.canonicalName))
             return getChars().length;
         if (canonicalName.equals(supportedTypes.bytes.canonicalName))
             return getBytes().length;
-        return -1L;
+        return 0L;
     }
 
     public void put(Object data){
