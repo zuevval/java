@@ -65,7 +65,8 @@ public class DummyReader implements Reader {
         return res;
     }
 
-    @Override
+
+    @NotNull
     public Status status() {
         return Status.OK;
     }

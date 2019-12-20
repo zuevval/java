@@ -48,17 +48,12 @@ public abstract class AbstractConsumer
 
     @Override
     public long loadDataFrom(Producer producer){
-        if(producer.status() != Status.OK){
-            if(logger != null)
-                logger.log("Error in Consumer.loadDataFrom(producer): producer is not OK");
-            status = Status.ERROR;
-            return 0L;
-        }
         Producer.DataAccessor da = producers.get(producer);
         if(da == null){
             if(logger != null)
                 logger.log("Error in Consumer.loadDataFrom(producer):" +
-                        " unknown producer, must run addProducer(producer)");
+                        " unknown producer "+  "of type "+ producer.getClass().getCanonicalName() +
+                        ", must run addProducer(producer)");
             status = Status.ERROR;
             return 0L;
         }

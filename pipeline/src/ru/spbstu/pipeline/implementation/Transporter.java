@@ -53,7 +53,7 @@ public class Transporter {
             return -1;
         }
 
-        boolean workersAreOK = (reader.status() == Status.OK) && (writer.status() == Status.OK);
+        boolean workersAreOK = writer.status() == Status.OK;
         for(Executor ex: executors) workersAreOK &= (ex.status() == Status.OK);
         if(!workersAreOK){
             status = Status.ERROR;
@@ -121,7 +121,7 @@ public class Transporter {
             res =  workerType.cast(Class.forName(workerParameters.className)
                     .getConstructor(String.class, Logger.class)
                     .newInstance(workerParameters.configFilename, logger));
-        } catch (ClassNotFoundException | NullPointerException e){
+        } catch (NoClassDefFoundError | ClassNotFoundException | NullPointerException e){
             status = Status.ERROR;
             logger.log("Error in Transporter: no such class: " + workerParameters.className);
         } catch (NoSuchMethodException | IllegalAccessException | InstantiationException e){
