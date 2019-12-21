@@ -1,4 +1,16 @@
-Π΄ΠµΠΊ 20, 2019 7:49:48 PM ru.spbstu.pipeline.logging.UtilLogger log
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
 INFO: Starting transporter run...
-Π΄ΠµΠΊ 20, 2019 7:49:48 PM ru.spbstu.pipeline.logging.UtilLogger log
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Damaskinskiy LZW compressor started
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Info: Compressor: closed stream
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Damaskinskiy LZW compressor finished
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Damaskinskiy LZW decompressor started
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Info: Decompressor: closed files
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Damaskinskiy LZW decompressor finished
+δεκ 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
 INFO: Transporter run is over.

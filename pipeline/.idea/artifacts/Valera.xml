@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Valera">
+    <output-path>$PROJECT_DIR$/out/artifacts/Valera</output-path>
+    <root id="archive" name="Valera.jar">
+      <element id="module-output" name="pipeline" />
+    </root>
+  </artifact>
+</component>
