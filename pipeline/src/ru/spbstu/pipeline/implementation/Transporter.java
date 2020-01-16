@@ -70,8 +70,12 @@ public class Transporter {
             logger.log("Transporter not ready to run.");
             return;
         }
+        ArrayList<Thread> threads = new ArrayList<>();
+        threads.add(new Thread(writer));
+        for(Executor ex:executors) threads.add(new Thread(ex));
+        threads.add(new Thread(reader));
         logger.log("Starting transporter run...");
-        reader.run();
+        for (Thread t: threads) t.start(); // launch writer, executors, and finally launch reader
         logger.log("Transporter run is over.");
     }
 
@@ -96,18 +100,12 @@ public class Transporter {
             for (WorkerParameters executorParam: executorParams)
                 executors.add(createWorker(executorParam, Executor.class));
             if(checkWorkers() != 0) return;
-            for (int i = 1; i < executors.size(); i++){
-                Executor producer = executors.get(i-1);
-                Executor consumer = executors.get(i);
-                producer.addConsumer(consumer);
-                consumer.addProducer(producer);
+            for (Executor ex:executors){ // add all executors PARALLEL
+                ex.addConsumer(writer);
+                writer.addProducer(ex);
+                ex.addProducer(reader);
+                reader.addConsumer(ex);
             }
-            Executor firstExecutor = executors.get(0);
-            reader.addConsumer(firstExecutor);
-            firstExecutor.addProducer(reader);
-            Executor lastExecutor = executors.get(executors.size() - 1);
-            writer.addProducer(lastExecutor);
-            lastExecutor.addConsumer(writer);
         }
     }
 

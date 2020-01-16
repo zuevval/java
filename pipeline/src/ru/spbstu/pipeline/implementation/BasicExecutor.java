@@ -7,36 +7,26 @@ import ru.spbstu.pipeline.Producer;
 import ru.spbstu.pipeline.Status;
 import ru.spbstu.pipeline.logging.Logger;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 public class BasicExecutor extends AbstractConsumer implements Executor {
     protected Object outputData;
     protected List<Consumer> consumers = new ArrayList<>();
-    protected ExecutorDataAccessor dataAccessor = new ExecutorDataAccessor();
+    protected final ExecutorDataAccessor dataAccessor = new ExecutorDataAccessor();
 
     public void run(){
-        dataAccessor.put(getBytes());
+        synchronized (dataAccessor){
+            dataAccessor.put(getBytes());
+        }
         for (Consumer consumer: consumers){
             long consumerLoadStatus = consumer.loadDataFrom(this);
-            if (consumerLoadStatus != 0L)
-                consumer.run();
-            else if (logger != null)
-                logger.log("Warning in Executor.run(): did not launch consumer - " +
+            if (consumerLoadStatus == 0L && logger != null)
+                logger.log("Warning in Executor.run(): " +
                         "consumer.loadDataFrom(this) returned status 0");
         }
     }
 
-    protected void getInputData(){
-        if (inputData == null) {
-            status = Status.EXECUTOR_ERROR;
-            if(logger != null)
-                logger.log("error in BasicExecutor.get: all producers failed to provide valid inputData");
-        }
-    }
-
+    @NotNull
     @Override
     public Set<String> outputDataTypes() {
         return TypeCaster.getSupportedTypes();
@@ -51,7 +41,7 @@ public class BasicExecutor extends AbstractConsumer implements Executor {
 
     @NotNull
     @Override
-    public DataAccessor getAccessor(String canonicalName) {
+    public DataAccessor getAccessor(@NotNull String canonicalName) {
         Objects.requireNonNull(dataAccessor);
         dataAccessor.canonicalTypeName = canonicalName;
         return dataAccessor;
@@ -59,9 +49,32 @@ public class BasicExecutor extends AbstractConsumer implements Executor {
 
     protected Object getBytes() {
         if (outputData != null) return outputData;
-        if (inputData == null) getInputData();
-        outputData = inputData;
-        return outputData;
+        while (readyProducersCounter == 0){
+            try {
+                Thread.sleep(waitPeriodMillis);
+            } catch(InterruptedException e){
+                status = Status.EXECUTOR_ERROR;
+                if(logger != null)
+                    logger.log("Error in Executor.getBytes(): " +
+                            "exception in Thread.sleep(...)");
+            }
+        }
+        for (Map.Entry<Producer, Producer.DataAccessor> entry : producers.entrySet()) {
+            synchronized (entry.getValue()){
+                Producer.DataAccessor dataAccessor = entry.getValue();
+                if (dataAccessor != null){
+                    return makeOutput(dataAccessor.get());
+                }
+            }
+        }
+        if(logger != null)
+            logger.log("Warning in Executor.run(): one of producers loaded input data," +
+                    "but all input data accessors are null");
+        return null;
+    }
+
+    protected synchronized Object makeOutput(@NotNull Object data){
+        return data;
     }
 
     @Override

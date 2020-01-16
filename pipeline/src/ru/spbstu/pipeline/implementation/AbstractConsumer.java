@@ -11,12 +11,13 @@ import java.util.*;
 
 public abstract class AbstractConsumer
         implements Consumer, InitializableConsumer {
-    protected Object inputData;
     protected Status status = Status.OK;
     protected Map<Producer, Producer.DataAccessor> producers = new HashMap<>();
     protected Logger logger;
     protected WorkerParser parser;
     protected static Set<String> supportedInputTypes = TypeCaster.getSupportedTypes();
+    protected final static long waitPeriodMillis = 200;
+    protected volatile int readyProducersCounter = 0; // counts producers that are over and provided data
 
     @Override
     public void addProducer(Producer producer){
@@ -57,13 +58,7 @@ public abstract class AbstractConsumer
             status = Status.ERROR;
             return 0L;
         }
-        inputData = da.get();
-        if(inputData == null){
-            if(logger != null)
-                logger.log("Error in Consumer.loadDataFrom(producer): loaded data is null");
-            status = Status.ERROR;
-            return 0L;
-        }
+        readyProducersCounter++;
         return da.size();
     }
 }

@@ -16,7 +16,7 @@ public class TypeCaster {
         private final String canonicalName;
         supportedTypes(String canonicalName) { this.canonicalName = canonicalName; }
     }
-    private static Set<String> supportedTypesSet;
+    private static final Set<String> supportedTypesSet;
     static {
         supportedTypesSet = new LinkedHashSet<>();
         for(supportedTypes t:supportedTypes.values()){

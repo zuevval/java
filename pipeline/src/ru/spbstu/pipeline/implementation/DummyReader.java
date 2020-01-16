@@ -76,7 +76,6 @@ public class DummyReader implements Reader {
         dataAccessor.put(getBytes());
         for (Consumer consumer: consumers){
             consumer.loadDataFrom(this);
-            consumer.run();
         }
     }
 }
