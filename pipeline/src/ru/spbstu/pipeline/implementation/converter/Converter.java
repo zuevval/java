@@ -25,7 +25,7 @@ class Converter {
         eof = -1;
         maxProbability = 1.0;
         minProbability = 0.0;
-        charset = StandardCharsets.UTF_16BE;
+        charset = StandardCharsets.UTF_8;
     }
 
     private Map<Character, Double> probabilities;

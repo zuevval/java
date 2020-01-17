@@ -37,14 +37,14 @@ public class BasicWriter extends AbstractConsumer implements Writer  {
         try {
             FileOutputStream stream = new FileOutputStream(outputFilename);
             for (Map.Entry<Producer, Producer.DataAccessor> entry : producers.entrySet()) {
-                Producer.DataAccessor dataAccessor = entry.getValue();
-                if (dataAccessor == null) {
-                    status = Status.WRITER_ERROR;
-                    if (logger != null)
-                        logger.log("Error in BasicWriter.writeData: one of data accessors is null");
-                    return;
-                }
-                synchronized (dataAccessor) {
+                synchronized (entry.getValue()) {
+                    Producer.DataAccessor dataAccessor = entry.getValue();
+                    if (dataAccessor == null) {
+                        status = Status.WRITER_ERROR;
+                        if (logger != null)
+                            logger.log("Error in BasicWriter.writeData: one of data accessors is null");
+                        return;
+                    }
                     Object inputData = dataAccessor.get();
                     if (inputData.getClass() != byte[].class) {
                         if (logger != null)

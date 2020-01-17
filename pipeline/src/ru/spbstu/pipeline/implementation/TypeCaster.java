@@ -6,7 +6,7 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class TypeCaster {
-    private static Charset charset = StandardCharsets.UTF_16BE;
+    private static Charset charset = StandardCharsets.UTF_8;
 
     private enum supportedTypes{
         bytes(byte[].class.getCanonicalName()),

@@ -1,16 +1,6 @@
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
+янв 17, 2020 11:31:03 AM ru.spbstu.pipeline.logging.UtilLogger log
 INFO: Starting transporter run...
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Damaskinskiy LZW compressor started
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Info: Compressor: closed stream
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Damaskinskiy LZW compressor finished
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Damaskinskiy LZW decompressor started
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Info: Decompressor: closed files
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Damaskinskiy LZW decompressor finished
-дек 21, 2019 4:10:34 PM ru.spbstu.pipeline.logging.UtilLogger log
-INFO: Transporter run is over.
+янв 17, 2020 11:31:03 AM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: Transporter is launched. Manager terminates its work.
+янв 17, 2020 11:31:04 AM ru.spbstu.pipeline.logging.UtilLogger log
+INFO: output has been written to test_run/out.txt

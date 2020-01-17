@@ -75,8 +75,9 @@ public class Transporter {
         for(Executor ex:executors) threads.add(new Thread(ex));
         threads.add(new Thread(reader));
         logger.log("Starting transporter run...");
-        for (Thread t: threads) t.start(); // launch writer, executors, and finally launch reader
-        logger.log("Transporter run is over.");
+        // launch writer, executors, and finally launch reader
+        threads.forEach(java.lang.Thread::start);
+        logger.log("Transporter is launched. Manager terminates its work.");
     }
 
     private void buildPipeline(String configFilename){

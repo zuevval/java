@@ -1,5 +1,6 @@
 package ru.spbstu.pipeline.implementation;
 
+import org.jetbrains.annotations.NotNull;
 import ru.spbstu.pipeline.Consumer;
 import ru.spbstu.pipeline.InitializableConsumer;
 import ru.spbstu.pipeline.Producer;
@@ -20,13 +21,8 @@ public abstract class AbstractConsumer
     protected volatile int readyProducersCounter = 0; // counts producers that are over and provided data
 
     @Override
-    public void addProducer(Producer producer){
+    public void addProducer(@NotNull Producer producer){
         if(producers.containsKey(producer)) return;
-        if (producer == null){
-            if (logger != null) logger.log("Warning in Consumer.addProducer: " +
-                    "tried to add producer that is null");
-            return;
-        }
         Set<String> types = producer.outputDataTypes();
         Producer.DataAccessor da = null;
         for (String type:supportedInputTypes)
@@ -42,13 +38,12 @@ public abstract class AbstractConsumer
     }
 
     @Override
-    public void addProducers(List<Producer> producers){
-        for (Producer producer: producers)
-            addProducer(producer);
+    public void addProducers(@NotNull List<Producer> producers){
+        producers.forEach(this::addProducer);
     }
 
     @Override
-    public long loadDataFrom(Producer producer){
+    public long loadDataFrom(@NotNull Producer producer){
         Producer.DataAccessor da = producers.get(producer);
         if(da == null){
             if(logger != null)
