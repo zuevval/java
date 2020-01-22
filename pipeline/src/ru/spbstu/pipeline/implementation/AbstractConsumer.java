@@ -43,7 +43,7 @@ public abstract class AbstractConsumer
     }
 
     @Override
-    public long loadDataFrom(@NotNull Producer producer){
+    public synchronized long loadDataFrom(@NotNull Producer producer){
         Producer.DataAccessor da = producers.get(producer);
         if(da == null){
             if(logger != null)
